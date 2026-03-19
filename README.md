@@ -5,7 +5,73 @@ _¡¡¡ LOGO POR DEFNIR !!!_
 Sistema de Punto de Venta (POS) modular.  
 Permite gestionar inventario, ventas y analíticas con un modelo simple por sucursal.
 
-## Tecnologias
+## Índice
+
+- [Orb](#orb)
+  - [Tecnologías](#tecnologías)
+    - [Tauri v2](#tauri-v2-desktop-app-mobiletablet)
+    - [Actix Web](#actix-web-rust-backend)
+    - [Base de Datos](#base-de-datos)
+      - [SQLite (Local / Offline)](#sqlite-local--offline)
+      - [PostgreSQL / CockroachDB (Nube)](#postgresql--cockroachdb-nube)
+    - [Tailwind CSS v4](#tailwind-css-v4)
+
+- [Capacidades](#capacidades)
+  - [Arquitectura General](#arquitectura-general)
+  - [Gestión de Inventario](#gestión-de-inventario)
+  - [Ventas y Lista de Compra](#ventas-y-lista-de-compra)
+  - [Registro de Venta](#registro-de-venta)
+  - [Gestión de Precios](#gestión-de-precios)
+  - [Corte de Caja](#corte-de-caja)
+  - [Reportes de Ventas](#reportes-de-ventas)
+  - [Analíticas y KPIs](#analíticas-y-kpis)
+  - [Alertas Inteligentes](#alertas-inteligentes)
+  - [Sistema de Roles](#sistema-de-roles)
+  - [Multi-Sucursal](#multi-sucursal)
+  - [Gestión de SKUs](#gestión-de-skus)
+  - [Experiencia de Usuario](#experiencia-de-usuario)
+  - [Seguridad y Control](#seguridad-y-control)
+  - [Beneficios Clave](#beneficios-clave)
+
+- [Modelo Comercial](#modelo-comercial)
+  - [Modelo de negocio](#modelo-de-negocio)
+  - [Prueba Gratuita](#prueba-gratuita)
+  - [Planes Disponibles](#planes-disponibles)
+    - [Plan Básico Web](#plan-básico-web)
+    - [Plan Web Profesional](#plan-web-profesional)
+    - [Plan Completo (Web + Offline)](#plan-completo-web--offline)
+  - [Capacidad adicional](#capacidad-adicional)
+  - [Módulos Personalizados](#módulos-personalizados)
+
+- [Diseño](#diseño)
+
+- [Base de Datos](#base-de-datos-1)
+  - [DB Diagram (Mermaid)](#mermaid)
+  - [DB Diagram (DBML)](#dbml)
+
+- [API](#endpoints)
+  - [Versionado de API](#versionado-de-api)
+
+  - [Auth](#auth)
+  - [Tiendas](#tiendas)
+  - [Users](#users)
+  - [Cajas (Devices)](#cajas)
+  - [Productos](#productos)
+  - [Precios](#precio-de-productos)
+  - [Categorías](#categorias)
+  - [Inventario](#inventario)
+  - [Ventas](#ventas)
+  - [Pagos](#pagos)
+  - [Caja (Cash Sessions)](#caja)
+  - [Clientes](#clientes)
+  - [Reportes](#reportes)
+  - [Sync](#sync)
+
+- [Reglas del Sistema](#notas)
+  - [Endpoints Críticos](#endpoints-que-más-importan)
+  - [Reglas de Oro](#reglas-de-oro)
+
+## Tecnologías
 
 ### Tauri v2 (Desktop App, Mobile/Tablet)
 
@@ -329,11 +395,9 @@ Ejemplos:
 
 <br/>
 
-# Orb
-
-POS
-
 ## Db diagram
+
+### Mermaid
 
 ```mermaid
 erDiagram
@@ -520,6 +584,7 @@ erDiagram
     }
 ```
 
+### Dbml
 <details>
 <summary>DB Diagram</summary>
 
@@ -1104,13 +1169,17 @@ Tablas:
 
 ### Notas
 
-ENDPOINTS QUE MÁS IMPORTAN
+#### ENDPOINTS QUE MÁS IMPORTAN
 
-```http
+```
 /sales
+
 /products/search
+
 /cash-sessions/open
+
 /cash-sessions/close
+
 /inventory/adjust
 ```
 
@@ -1132,7 +1201,7 @@ ENDPOINTS QUE MÁS IMPORTAN
 
 Especialmente en:
 
-```http
+```
 /sales
 /sales/cancel
 ```
