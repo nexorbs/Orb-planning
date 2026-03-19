@@ -1205,3 +1205,280 @@ Especialmente en:
 /sales
 /sales/cancel
 ```
+
+# Roadmap
+
+Se organizo un Roadmap a base de colores para que sea de "facil" identificación.
+
+## 🟢 FASE 0 — Fundaciones (Infraestructura base)
+
+### Objetivo
+Tener backend corriendo, auth funcional y base del sistema lista.
+
+### Features
+
+#### 1. Autenticación básica
+Sistema de login + sesión
+
+**Endpoints:**
+- `POST /auth/login`
+- `GET /auth/me`
+- `POST /auth/logout`
+
+#### 2. Modelo de usuarios + roles
+
+**Endpoints:**
+- `GET /users`
+- `POST /users`
+- `PATCH /users/:id`
+
+#### 3. Sucursales (multi-store base)
+
+**Endpoints:**
+- `GET /stores`
+- `GET /stores/:id`
+
+### Notas
+- Aquí definimos JWT + middleware
+- No complicarse con permisos aún → solo roles
+- Esto desbloquea todo lo demás
+
+---
+
+## 🟡 FASE 1 — Catálogo de productos
+
+### Objetivo
+Poder crear productos y consultarlos rápido (core del POS)
+
+### Features
+
+#### 1. CRUD de productos
+
+**Endpoints:**
+- `GET /products`
+- `POST /products`
+- `PATCH /products/:id`
+
+#### 2. Búsqueda rápida (CRÍTICO)
+
+**Endpoints:**
+- `GET /products/search?q=`
+- `GET /products/barcode/:barcode`
+
+#### 3. Categorías
+
+**Endpoints:**
+- `GET /categories`
+- `POST /categories`
+
+#### 4. Precios por sucursal
+
+**Endpoints:**
+- `PUT /products/:id/price`
+- `GET /stores/:store_id/prices`
+
+### Notas
+> Este es el endpoint más importante del sistema: **`/products/search`**
+>
+> Optimízarlo desde el día 1 (índices, LIKE, etc.)
+
+- Aquí aún **NO** se maneja stock
+
+---
+
+## 🟠 FASE 2 — Inventario (la base real del negocio)
+
+### Objetivo
+Tener control real de stock basado en eventos
+
+### Features
+
+#### 1. Movimientos de inventario
+
+**Endpoints:**
+- `POST /inventory/entry` (compra)
+- `POST /inventory/adjust` (ajuste manual)
+- `POST /inventory/loss` (merma)
+
+#### 2. Consulta de inventario
+
+**Endpoints:**
+- `GET /inventory/movements`
+- `GET /inventory/stock`
+
+### Notas (MUY importantes)
+- **NO** guardar stock directo en `products`
+- Todo sale de `inventory_movements`
+
+Esto nos salva de:
+- bugs
+- inconsistencias
+- dolores de cabeza
+
+---
+
+## 🔴 FASE 3 — Ventas (MVP funcional)
+
+### Objetivo
+Ya vender en vida real
+
+### Features
+
+#### 1. Crear venta completa
+
+**Endpoint clave:**
+- `POST /sales`
+
+#### 2. Consultar ventas
+- `GET /sales`
+- `GET /sales/:id`
+
+#### 3. Cancelación
+- `POST /sales/:id/cancel`
+
+#### 4. Pagos
+- `GET /sales/:id/payments`
+
+### Notas críticas
+> Este endpoint debe ser **transaccional**
+
+Validaciones:
+- stock
+- precios
+- totales
+
+Genera:
+- `sale`
+- `sale_items`
+- `payments`
+- `inventory_movements`
+
+---
+
+## 🟣 FASE 4 — Caja (operación real de tienda)
+
+### Objetivo
+Controlar dinero real (apertura/cierre)
+
+### Features
+
+#### 1. Apertura de caja
+- `POST /cash-sessions/open`
+
+#### 2. Cierre de caja
+- `POST /cash-sessions/:id/close`
+
+#### 3. Estado actual
+- `GET /cash-sessions/current`
+
+#### 4. Historial
+- `GET /cash-sessions`
+
+### Notas
+- Calcular `expected_amount` automáticamente
+- Esto conecta ventas + dinero físico
+
+---
+
+## 🔵 FASE 5 — Dispositivos (cajas físicas)
+
+### Objetivo
+Soportar múltiples cajas por tienda
+
+### Features
+
+#### 1. Gestión de dispositivos
+- `GET /devices`
+- `POST /devices`
+
+### Notas
+- Cada venta debe tener `device_id`
+- Esto habilita: auditoría y multi-caja real
+
+---
+
+## 🟤 FASE 6 — Clientes
+
+### Objetivo
+Prepararnos para features futuras (crédito, facturación)
+
+### Features
+- `GET /customers`
+- `POST /customers`
+
+### Notas
+- No sobrepensar por el momento
+- Es base para: CFDI, historial, lealtad
+
+---
+
+## ⚫ FASE 7 — Reportes (insights básicos)
+
+### Objetivo
+Dar valor real al negocio
+
+### Features
+
+#### 1. Reportes de ventas
+- `GET /reports/sales/daily`
+- `GET /reports/sales/range`
+
+#### 2. Productos top
+- `GET /reports/top-products`
+
+### Notas
+- Aquí se pueden usar agregaciones SQL
+- No necesitamos BI complejo aún
+
+---
+
+## ⚪ FASE 8 — Sync (modo offline real)
+
+### Objetivo
+Convertirte en un POS serio
+
+### Features
+
+#### 1. Subida de datos
+- `POST /sync/push`
+
+#### 2. Descarga de cambios
+- `GET /sync/pull`
+
+### Notas
+Usa:
+- timestamps
+- versionado
+- idempotencia
+
+Modelo: `local (SQLite)` → `cloud` → `otros dispositivos`
+
+---
+
+
+Sí, ventas antes que inventario completo, porque:
+- podemos simular stock al inicio
+- validamos el UX rápido
+
+---
+
+## MVP
+
+| Feature | Fase |
+|---|---|
+| Auth | 0 |
+| Productos + búsqueda | 1 |
+| Ventas | 3 |
+| Caja básica | 4 |
+
+> Con eso ya deberiamos poder cobrar algo
+
+---
+
+## Errores que evitar
+
+- Hacer sync demasiado pronto
+- Sobre-diseñar roles/permisos
+- Meter reportes complejos temprano
+- No hacer transacciones en `/sales`
+- Guardar stock como columna en `products`
