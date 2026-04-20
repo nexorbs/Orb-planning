@@ -1,3 +1,6 @@
 [submodule "repos/backend"]
 	path = repos/backend
 	url = https://github.com/nexorbs/orb-backend
+[submodule "repos/frontend"]
+	path = repos/frontend
+	url = https://github.com/nexorbs/orb-frontend
